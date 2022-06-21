@@ -1,0 +1,56 @@
+package service;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import dao.MemberDAO;
+import vo.MemberVO;
+
+/**
+ * Servlet implementation class UpdateSerlvet
+ */
+@WebServlet("/UpdateMember")
+public class UpdateSerlvet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MemberDAO dao = new MemberDAO();
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html;charset=utf-8");
+		MemberVO member = new MemberVO();
+		int num = Integer.parseInt(request.getParameter("number"));
+		String day = request.getParameter("d_day");
+		member.setCustno(num);
+		member.setCustname(request.getParameter("name"));
+		member.setPhone(request.getParameter("tel"));
+		member.setAdress(request.getParameter("adress"));		
+		member.setJoindate(dao.changeDay(day));
+		member.setGrade(request.getParameter("grade"));
+		member.setCity(request.getParameter("code"));
+		PrintWriter out = response.getWriter();
+		try {
+			int result = dao.updateMember(member);
+			if (result == 0) {
+				out.print("<script>");
+				out.print("alert('수정 실패');");
+				out.print("location.href = 'memberUpdate.jsp?num=" + num + "'");
+				out.print("</script>");
+			} else {
+				out.print("<script>");
+				out.print("alert('수정 성공');");
+				out.print("location.href = 'memberUpdate.jsp?num=" + num + "'");
+				out.print("</script>");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+}
